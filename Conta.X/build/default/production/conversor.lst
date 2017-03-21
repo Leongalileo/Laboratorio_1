@@ -1,0 +1,924 @@
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 #include "p16F887.inc"
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ; Build date : Feb 13 2015
+                      00005 ;  MPASM PIC16F887 processor include
+                      00006 ; 
+                      00007 ;  (c) Copyright 1999-2015 Microchip Technology, All rights reserved
+                      00008 ;==========================================================================
+                      00009 
+                      00810         LIST
+                      00002   
+                      00003     list p=16f887
+                      00004 
+                      00005 ;; CONFIG1
+                      00006 ;; __config 0xE3F4
+                      00007 ; __CONFIG _CONFIG1, _FOSC_INTRC_NOCLKOUT & _WDTE_OFF & _PWRTE_OFF & _MCLRE_ON & _CP_OFF & _CPD_OFF & _B
+                            OREN_ON & _IESO_OFF & _FCMEN_OFF & _LVP_OFF
+                      00008 ;; CONFIG2
+                      00009 ;; __config 0xFFFF
+                      00010 ; __CONFIG _CONFIG2, _BOR4V_BOR40V & _WRT_OFF 
+                      00011  
+                      00012  
+Message[303]: Program word too large.  Truncated to core size. (E234)
+2007   2234           00013  __CONFIG _CONFIG1, 0XE234
+Message[303]: Program word too large.  Truncated to core size. (FEFF)
+2008   3EFF           00014  __CONFIG _CONFIG2, 0XFEFF 
+                      00015  
+                      00016     CBLOCK  0X70        ;DIRECCIONAMOS EL REGISTRO DE PROPOSITO GENERAL
+  00000070            00017     UNID
+  00000071            00018     UNIDADES
+  00000072            00019     DECENAS
+  00000073            00020     CENTENAS
+  00000074            00021     CONT
+  00000075            00022     D3
+  00000076            00023     D2
+  00000077            00024     D1
+  00000078            00025     NUM_TABLA
+  00000079            00026     NUM_S
+  0000007A            00027     AUX
+                      00028     endC
+                      00029 
+                      00030     ORG     .0          ;ORG DIRECCION DONDE ARRANCA EL PROGRAMA (MEMORIA DEL PROGRAMA)
+0000   2???           00031     GOTO    INICIO      ;RETORNO DE ETIQUETA DE INICO DEL PROGRAMA
+                      00032     ORG     .5          ;SALTO DE 0 A LA POSICION 5 DE MEMORIA AL ARRANCAR EL PROGRAMA
+0005                  00033 INICIO:
+                      00034 ;------------------- DIRRECIONAMIENTO DEL BANCO -----------------------------
+0005   1683           00035         BSF     STATUS,RP0  ; CONFIGURACION DIRECCIONAR EL BANCO 1
+0006   1303           00036         BCF     STATUS,RP1  ; CONFIGURACION DIRECCIONAR EL BANC0 1
+                      00037 ;----------------------------------------------------------------------------
+                      00038 ;------------------- CONFIGURACION DE LOS PUERTOS I/O PORTS------------------
+                      00039 ;-- Configurando el TRIS se determina el pueto A o B como entrada o salida --
+                      00040 ;----------------------------------------------------------------------------
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0007   0186           00041         CLRF    TRISB       ;configuramos el puerto B en ceros con CLRf
+0008   30FF           00042         MOVLW   0XFF        ;MUEVE EL VALOR DE UNA CONSTANTE A W TODO EN 1 OXFF
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0009   0085           00043         MOVWF   TRISA       ;CONFIGURA LOS BITS DEL PUERTO A TRISA EN UNO MOVIENDO W A F
+000A   1683 1303      00044         BANKSEL OSCCON
+000C   30F1           00045         MOVLW   0XF1
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+000D   008F           00046         MOVWF   OSCCON
+000E   1683 1303      00047         BANKSEL TRISC
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0010   0187           00048         CLRF    TRISC
+0011   1683 1303      00049         BANKSEL TRISC
+0013   300F           00050         MOVLW   B'00001111'
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0014   0087           00051         MOVWF   TRISC
+0015   3007           00052         MOVLW   B'111'
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0016   0089           00053         MOVWF   TRISE
+0017   1683 1703      00054         BANKSEL ANSEL
+0019   3000           00055         MOVLW   0X0
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001A   0089           00056         MOVWF   ANSELH      ;ANSELH REFERENCIA AL PUERTO B  CLRF PARA ENTRADA O SALIDA DIGITAL
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001B   0188           00057         CLRF    ANSEL       ;ANSEL SE COFIGURA COMO CERO PARA ENTRADA Y SALIDAS DIGITALES CON CLRF
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001C   0188           00058         CLRF    ANSEL       ;ANSEL SE COFIGURA COMO CERO PARA ENTRADA Y SALIDAS DIGITALES CON CLRF
+                      00059 ;-----------------------------------------------------------------------------
+001D   1283 1303      00060         BANKSEL PORTB       ;BANKSEL DIRECCIONA EL BANCO Y EL REGISTRO DE UNA AL BANCO 1
+001F   0186           00061         CLRF    PORTB       ;PONEMOS A CERO TODOS LOS PUERTOS DE B PARA LA ENTRADA DEL PROGRAMA
+0020   1283 1303      00062         BANKSEL PORTC
+0022   0187           00063         CLRF    PORTC
+0023   0189           00064         CLRF    PORTE
+0024   01F8           00065         CLRF    NUM_TABLA
+0025   01FA           00066         CLRF    AUX
+                      00067 
+                      00068 ;------------------------------------------------------------------------------
+                      00069 ;-----------------------------------------------------------------------------
+                      00070 ;----------------- CREACION DE CONDICIONALES PARA EL RESETEO Y LA PRECARGA ------------------------
+                      00071         
+0026   1C09           00072 CLEAR   BTFSS   PORTE,0     ;BTFSS HACE QUE SE TESTEE EL BIT RE0 COMO ENTRADA DE CONTROL DE REINICIO DEL
+                             CONTEO
+0027   2???           00073         GOTO    CONTAR      ;SE GENERA EL CONDICIONAL A PARTIR DEL TESTEO ANTERIOR PARA GENERAR UN SALTO
+                             EN EL PROGRAMA SEGUN SEA EL BIT 1 O 0
+0028   2???           00074         GOTO    CEROS       
+                      00075         
+0029                  00076 CONTAR  
+0029   1C89           00077         BTFSS  PORTE,1      ;SE TESTEA RE1 COMO ENTRADA DE CONTROL PARA LA PRECARGA
+002A   2???           00078         GOTO   DOS
+002B   2???           00079         GOTO    PREL
+                      00080 
+002C   01F4           00081 CEROS   CLRF    CONT        ;CUANDO OCURRE EL SALTO DESDE EL BTFSS SE LIMPIA EL REGISTRO CONT
+002D   2???           00082         GOTO    DOS         ;SE  GENERA UN SALTO EN EL PROGRAMA
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00083         
+002E                  00084 PREL    
+002E   0805           00085         MOVF    PORTA,W     ;TOMO EL DATO DEL PUERTO A Y SE MUEVE AL REGISRO W
+002F   00F4           00086         MOVWF   CONT        ;DE W PASA AL REGISTRO DONDE ESTA EL CONTADOR, CON LO QUE LA INFORMACION EN 
+                            PORTA PASA AL CONTADOR
+0030   2???           00087         GOTO    TRES        ;DE SE SALTA DIRECTAMENTE AL ENMASCARAMIENTO SIN INCREMENTAR PARA PODER MOSR
+                            AR LA PRECARGA
+                      00088         
+0031                  00089 DOS
+0031   0AF4           00090         INCF    CONT,F
+0032   0874           00091         MOVF    CONT,W
+0033   2???           00092 TRES    GOTO    UNO
+                      00093 ;       MOVLW   .255
+                      00094 ;       XORWF   CONT,W
+                      00095 ;       BTFSS   STATUS,Z
+                      00096 ;       GOTO    DOS
+                      00097 ;       GOTO    INICIO
+                      00098         
+0034                  00099 UNO     
+0034   00F0           00100         MOVWF   UNID        ;MUEVO EL PORTA A REGISTRO
+0035   30FF           00101         MOVLW   0XFF        ;ENMASCARAMIENTO
+0036   0570           00102         ANDWF   UNID,W      ;PASO LOS TRES PRIMEROS BITS BAJOS
+0037   00F1           00103         MOVWF   UNIDADES    ;CONTIENE EL DATOS DE LOS PUERTOS
+0038   01F2           00104         CLRF    DECENAS
+0039   01F3           00105         CLRF    CENTENAS
+                      00106 
+                      00107 
+003A                  00108 BCD_RESTA
+003A   300A           00109         MOVLW   .10         ;A LAS UNIDADES SE LE VA RESTANDO 10 EN CADA PASADA
+003B   0271           00110         SUBWF   UNIDADES,W  ;W=10 UNIDADES -10
+003C   1C03           00111         BTFSS   STATUS,C    ;¿c=1? ¿W POSITIVO? ¿UNIDADES >= 10?
+003D   2???           00112         GOTO    BIN_BCD_FIN ;NO ES MENOR A 10 SE ACABO
+                      00113 
+003E                  00114 BCD_INCREMETA_DECENAS
+003E   00F1           00115         MOVWF   UNIDADES    ;RECUPERA LO QUE QUEDA DE LA RESTA
+003F   0AF2           00116         INCF    DECENAS,F   ;INCRREMENTA LAS DECENAS Y COMPRUEBA SI LLEGA A 10
+0040   300A           00117         MOVLW   .10         ;MOVEMOS 10 A W
+0041   0272           00118         SUBWF   DECENAS,W   ;W= DECENAS - 10
+0042   1C03           00119         BTFSS   STATUS,C    ;¿c=1? ¿W POSITIVO? ¿DECENAS >= 10?
+0043   2???           00120         GOTO    BCD_RESTA   ;NO VUELVE A PASAR RESTANDOLE 10
+                      00121 
+0044                  00122 BCD_INCREMENTA_CENTENAS
+0044   01F2           00123         CLRF    DECENAS     ;PONE A CERO LAS DECENAS
+0045   0AF3           00124         INCF    CENTENAS,F  ;INCREMENTA LA CENTENAS
+0046   2???           00125         GOTO    BCD_RESTA   ;RESTA 10 A UNID
+                      00126 
+0047                  00127 BIN_BCD_FIN
+0047   0E73           00128         SWAPF   CENTENAS,W   ;EN NIBBLE ALTO DE W
+0048   0772           00129         ADDWF   DECENAS,W    ;EN NIBBLE BAJO DE W
+0049   0086           00130         MOVWF   PORTB
+004A   2???           00131         CALL    RETARDO
+004B   0E71           00132         SWAPF   UNIDADES,W   ;EN NIBBLE ALTO DE W
+004C   0087           00133         MOVWF   PORTC
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+004D   2???           00134         CALL    RETARDO     ;SE LLAMA A LA RUTINA DE RETARDO PARA PODER VIUALIZAR POR UN SEGUNDO
+004E   2???           00135         GOTO    COMPARA     ;SE SALTA A LA ETIQUETA COMPARA
+004F   2???           00136         GOTO    CLEAR       ;SE SALTA AL INICIO
+                      00137         
+0050                  00138 TABLA
+0050   0878           00139         MOVF    NUM_TABLA,W     ;LA RUTINA TABLA CARGA UN 0 EN NUM_TABLA PARA ASI TRASLADAR EL APUNTADOR
+                             A 0
+0051   2???           00140         CALL    TABLA_SEC1      ;LLAMADO A LA TABLA
+0052   0086           00141         MOVWF   PORTB           ;MUEVE EL CONTENIDO DE LA POSICION EN TABLA AL PUERTOB
+0053   2???           00142         CALL    RETARDO         ;SE LLAMA EL RETARDO PARA PODER VER LA INFORMACION
+0054   1C09           00143         BTFSS   PORTE,0     ;BTFSS HACE QUE SE TESTEE EL BIT RE0 COMO ENTRADA DE CONTROL DE REINICIO DEL
+                             CONTEO
+0055   2???           00144         GOTO    $+2         ;SE GENERA EL CONDICIONAL A PARTIR DEL TESTEO ANTERIOR PARA GENERAR UN SALTO
+                             EN EL PROGRAMA SEGUN SEA EL BIT 1 O 0
+0056   2???           00145         GOTO    CEROS           
+0057   0AF8           00146         INCF    NUM_TABLA,F     ;SE AUMENTA LA POSICION DEL APUNTADOR PARA ACCEDER A LA SIGUIENTE POSICI
+                            ON EN LA TABLA
+0058   300C           00147         MOVLW   .12             ;SE MUEVE UN 12 (12 POSICIONES DE LA TABLA) A W PARA COMPARARLO CON
+0059   0678           00148         XORWF   NUM_TABLA,W     ;EL NUMERO DE APUNTADOR, Y REALIZAR EL CICLO HASTA COMPLETAR LA TABLA
+005A   1D03           00149         BTFSS   STATUS,Z        ;SE TESTEA LA BANDERA CERO 
+005B   2???           00150         GOTO    $-10            ;SI NO A LLEGADO A 12, SE VUELVE A REPETIR LA RUTINA
+005C   2???           00151         GOTO    LOOP            ;DE AQUI SALTA A UN CICLO QUE REPITE LA SECUENCIA COMPLETA DE LA TABLA  
+                            VEES PARA LOGRAR UN MINUTO DE DURACION
+                      00152         
+005D                  00153 LOOP
+005D   01F8           00154         CLRF    NUM_TABLA       ;SE BORRA EL APUNTADOR PARA INICIAR UNA NUEVA SECUENCIA
+Message[305]: Using default destination of 1 (file).
+005E   0AFA           00155         INCF    AUX             ;SE AUMNTA UN CONTADOR AUXILIAR
+005F   3005           00156         MOVLW   .5              ;SE MUEVE UN 5 A W PARA COMPARARLO Y SABER SI YA SE CUMPLIERON 5 CICLOS
+0060   067A           00157         XORWF   AUX,W
+0061   1D03           00158         BTFSS   STATUS,Z        ;DE ACUERDO AL RESULTADO DE LA COMPARACION, SE VUELVE A LA 
+0062   2???           00159         GOTO    TABLA           ;SECUENCIA O SE SALTA AL INICIO DEL PROGRAMA
+0063   2???           00160         GOTO    INICIO
+                      00161         
+                      00162         
+0064                  00163 TABLA_SEC1:
+0064   0782           00164         ADDWF   PCL,F
+0065   3481           00165         RETLW   0X81
+0066   34C3           00166         RETLW   0XC3
+0067   34E7           00167         RETLW   0XE7
+0068   34FF           00168         RETLW   0XFF
+0069   347E           00169         RETLW   0X7E
+006A   343C           00170         RETLW   0X3C
+006B   3418           00171         RETLW   0X18
+006C   343C           00172         RETLW   0X3C
+006D   347E           00173         RETLW   0X7E
+006E   34FF           00174         RETLW   0XFF
+006F   34E7           00175         RETLW   0XE7
+0070   34C3           00176         RETLW   0XC3
+                      00177         
+0071                  00178 COMPARA
+0071   30FF           00179         MOVLW   .255        ;SE MUEVE U 25 AL REGISRO W
+0072   0674           00180         XORWF   CONT,W      ;SE COMPARA CON EL CONTENIDO DEL CONTADOR
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0073   1D03           00181         BTFSS   STATUS,Z    ;SE TESTEA LA BANDERA DE 0, QUE SE ACTIVA CUANDO LA OPERACION XOR ES VERDADE
+                            R
+0074   2???           00182         GOTO    CLEAR       ;COMO AUN NO TERMINA EL CONTEO, GENERA EL CICLO HACIA CLEAR
+0075   2???           00183         GOTO    TABLA       ;CUANDO XOR ES 1, INDICA QUE EL CONTEO SE FINALIZO POR LO QUE ENVIA A UNA TA
+                            BLA
+                      00184                             ;QUE CONTIENE LA SECUENCIA DE FINALIZACION
+                      00185         #include "tempo.inc"
+                      00001 
+                      00002         
+0076                  00003 RETARDO:
+0076   30FF           00004         MOVLW .255
+0077   00F5           00005         MOVWF D3
+0078   3074           00006         MOVLW .116
+0079   00F6           00007         MOVWF D2
+007A   300A           00008         MOVLW .10
+007B   00F7           00009         MOVWF D1
+Message[305]: Using default destination of 1 (file).
+007C   0BF7           00010         DECFSZ D1
+007D   2???           00011         GOTO $-1
+Message[305]: Using default destination of 1 (file).
+007E   0BF6           00012         DECFSZ D2
+007F   2???           00013         GOTO $-4
+Message[305]: Using default destination of 1 (file).
+0080   0BF5           00014         DECFSZ D3
+0081   2???           00015         GOTO $-9
+0082   0008           00016         RETURN
+                      00017 
+0083                  00018 RETARDO_500ms:
+0083   3064           00019         MOVLW .100
+0084   00F5           00020         MOVWF D3
+0085   3032           00021         MOVLW .50
+0086   00F6           00022         MOVWF D2
+0087   3005           00023         MOVLW .5
+0088   00F7           00024         MOVWF D1
+Message[305]: Using default destination of 1 (file).
+0089   0BF7           00025         DECFSZ D1
+008A   2???           00026         GOTO $-1
+Message[305]: Using default destination of 1 (file).
+008B   0BF6           00027         DECFSZ D2
+008C   2???           00028         GOTO $-4
+Message[305]: Using default destination of 1 (file).
+008D   0BF5           00029         DECFSZ D3
+008E   2???           00030         GOTO $-9
+008F   0008           00031         RETURN
+                      00032 
+                      00186         
+Message[303]: Program word too large.  Truncated to core size. (E234)
+Message[303]: Program word too large.  Truncated to core size. (FEFF)
+2234 3EFF             00187         END
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE  6
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ABDEN                             00000000
+ABDOVF                            00000007
+ACKDT                             00000005
+ACKEN                             00000004
+ACKSTAT                           00000006
+ADCON0                            0000001F
+ADCON1                            0000009F
+ADCS0                             00000006
+ADCS1                             00000007
+ADDEN                             00000003
+ADFM                              00000007
+ADIE                              00000006
+ADIF                              00000006
+ADON                              00000000
+ADRESH                            0000001E
+ADRESL                            0000009E
+ANS0                              00000000
+ANS1                              00000001
+ANS10                             00000002
+ANS11                             00000003
+ANS12                             00000004
+ANS13                             00000005
+ANS2                              00000002
+ANS3                              00000003
+ANS4                              00000004
+ANS5                              00000005
+ANS6                              00000006
+ANS7                              00000007
+ANS8                              00000000
+ANS9                              00000001
+ANSEL                             00000188
+ANSELH                            00000189
+AUX                               0000007A
+BAUDCTL                           00000187
+BCD_INCREMENTA_CENTENAS           00000044
+BCD_INCREMETA_DECENAS             0000003E
+BCD_RESTA                         0000003A
+BCLIE                             00000003
+BCLIF                             00000003
+BF                                00000000
+BIN_BCD_FIN                       00000047
+BRG0                              00000000
+BRG1                              00000001
+BRG10                             00000002
+BRG11                             00000003
+BRG12                             00000004
+BRG13                             00000005
+BRG14                             00000006
+BRG15                             00000007
+BRG16                             00000003
+BRG2                              00000002
+BRG3                              00000003
+BRG4                              00000004
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+BRG5                              00000005
+BRG6                              00000006
+BRG7                              00000007
+BRG8                              00000000
+BRG9                              00000001
+BRGH                              00000002
+C                                 00000000
+C1CH0                             00000000
+C1CH1                             00000001
+C1IE                              00000005
+C1IF                              00000005
+C1OE                              00000005
+C1ON                              00000007
+C1OUT                             00000006
+C1POL                             00000004
+C1R                               00000002
+C1RSEL                            00000005
+C1SEN                             00000005
+C2CH0                             00000000
+C2CH1                             00000001
+C2IE                              00000006
+C2IF                              00000006
+C2OE                              00000005
+C2ON                              00000007
+C2OUT                             00000006
+C2POL                             00000004
+C2R                               00000002
+C2REN                             00000004
+C2RSEL                            00000004
+C2SYNC                            00000000
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCP2CON                           0000001D
+CCP2IE                            00000000
+CCP2IF                            00000000
+CCP2M0                            00000000
+CCP2M1                            00000001
+CCP2M2                            00000002
+CCP2M3                            00000003
+CCP2X                             00000005
+CCP2Y                             00000004
+CCPR1                             00000015
+CCPR1H                            00000016
+CCPR1L                            00000015
+CCPR2                             0000001B
+CCPR2H                            0000001C
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE  8
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+CCPR2L                            0000001B
+CENTENAS                          00000073
+CEROS                             0000002C
+CHS0                              00000002
+CHS1                              00000003
+CHS2                              00000004
+CHS3                              00000005
+CKE                               00000006
+CKP                               00000004
+CLEAR                             00000026
+CM1CON0                           00000107
+CM2CON0                           00000108
+CM2CON1                           00000109
+COMPARA                           00000071
+CONT                              00000074
+CONTAR                            00000029
+CREN                              00000004
+CSRC                              00000007
+D                                 00000005
+D1                                00000077
+D2                                00000076
+D3                                00000075
+DATA_ADDRESS                      00000005
+DC                                00000001
+DC1B0                             00000004
+DC1B1                             00000005
+DC2B0                             00000004
+DC2B1                             00000005
+DECENAS                           00000072
+DOS                               00000031
+D_A                               00000005
+D_NOT_A                           00000005
+ECCPAS                            0000009C
+ECCPAS0                           00000004
+ECCPAS1                           00000005
+ECCPAS2                           00000006
+ECCPASE                           00000007
+EEADR                             0000010D
+EEADRH                            0000010F
+EECON1                            0000018C
+EECON2                            0000018D
+EEDAT                             0000010C
+EEDATA                            0000010C
+EEDATH                            0000010E
+EEIE                              00000004
+EEIF                              00000004
+EEPGD                             00000007
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+FVREN                             00000000
+GCEN                              00000007
+GIE                               00000007
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE  9
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+GO                                00000001
+GO_DONE                           00000001
+GO_NOT_DONE                       00000001
+HTS                               00000002
+I2C_DATA                          00000005
+I2C_READ                          00000002
+I2C_START                         00000003
+I2C_STOP                          00000004
+INDF                              00000000
+INICIO                            00000005
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IOCB                              00000096
+IOCB0                             00000000
+IOCB1                             00000001
+IOCB2                             00000002
+IOCB3                             00000003
+IOCB4                             00000004
+IOCB5                             00000005
+IOCB6                             00000006
+IOCB7                             00000007
+IRCF0                             00000004
+IRCF1                             00000005
+IRCF2                             00000006
+IRP                               00000007
+LOOP                              0000005D
+LTS                               00000001
+MC1OUT                            00000007
+MC2OUT                            00000006
+MSK                               00000093
+MSK0                              00000000
+MSK1                              00000001
+MSK2                              00000002
+MSK3                              00000003
+MSK4                              00000004
+MSK5                              00000005
+MSK6                              00000006
+MSK7                              00000007
+NOT_A                             00000005
+NOT_ADDRESS                       00000005
+NOT_BO                            00000000
+NOT_BOR                           00000000
+NOT_DONE                          00000001
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_RC8                           00000006
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+NOT_TX8                           00000006
+NOT_W                             00000002
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+NOT_WRITE                         00000002
+NUM_S                             00000079
+NUM_TABLA                         00000078
+OERR                              00000001
+OPTION_REG                        00000081
+OSCCON                            0000008F
+OSCTUNE                           00000090
+OSFIE                             00000007
+OSFIF                             00000007
+OSTS                              00000003
+P                                 00000004
+P1M0                              00000006
+P1M1                              00000007
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PDC0                              00000000
+PDC1                              00000001
+PDC2                              00000002
+PDC3                              00000003
+PDC4                              00000004
+PDC5                              00000005
+PDC6                              00000006
+PEIE                              00000006
+PEN                               00000002
+PIE1                              0000008C
+PIE2                              0000008D
+PIR1                              0000000C
+PIR2                              0000000D
+PORTA                             00000005
+PORTB                             00000006
+PORTC                             00000007
+PORTD                             00000008
+PORTE                             00000009
+PR2                               00000092
+PREL                              0000002E
+PRSEN                             00000007
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+PSSAC0                            00000002
+PSSAC1                            00000003
+PSSBD0                            00000000
+PSSBD1                            00000001
+PSTRCON                           0000009D
+PULSR                             00000002
+PULSS                             00000003
+PWM1CON                           0000009B
+R                                 00000002
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE 11
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RA3                               00000003
+RA4                               00000004
+RA5                               00000005
+RA6                               00000006
+RA7                               00000007
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+RC0                               00000000
+RC1                               00000001
+RC2                               00000002
+RC3                               00000003
+RC4                               00000004
+RC5                               00000005
+RC6                               00000006
+RC7                               00000007
+RC8_9                             00000006
+RC9                               00000006
+RCD8                              00000000
+RCEN                              00000003
+RCIDL                             00000006
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+RD0                               00000000
+RD1                               00000001
+RD2                               00000002
+RD3                               00000003
+RD4                               00000004
+RD5                               00000005
+RD6                               00000006
+RD7                               00000007
+RE0                               00000000
+RE1                               00000001
+RE2                               00000002
+RE3                               00000003
+READ_WRITE                        00000002
+RETARDO                           00000076
+RETARDO_500ms                     00000083
+RP0                               00000005
+RP1                               00000006
+RSEN                              00000001
+RX9                               00000006
+RX9D                              00000000
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE 12
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+R_NOT_W                           00000002
+R_W                               00000002
+S                                 00000003
+SBOREN                            00000004
+SCKP                              00000004
+SCS                               00000000
+SEN                               00000000
+SENDB                             00000003
+SMP                               00000007
+SPBRG                             00000099
+SPBRGH                            0000009A
+SPEN                              00000007
+SR0                               00000006
+SR1                               00000007
+SRCON                             00000185
+SREN                              00000005
+SSPADD                            00000093
+SSPBUF                            00000013
+SSPCON                            00000014
+SSPCON2                           00000091
+SSPEN                             00000005
+SSPIE                             00000003
+SSPIF                             00000003
+SSPM0                             00000000
+SSPM1                             00000001
+SSPM2                             00000002
+SSPM3                             00000003
+SSPMSK                            00000093
+SSPOV                             00000006
+SSPSTAT                           00000094
+STATUS                            00000003
+STRA                              00000000
+STRB                              00000001
+STRC                              00000002
+STRD                              00000003
+STRSYNC                           00000004
+SWDTEN                            00000000
+SYNC                              00000004
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1GINV                            00000007
+T1GIV                             00000007
+T1GSS                             00000001
+T1INSYNC                          00000002
+T1OSCEN                           00000003
+T1SYNC                            00000002
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE 13
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+T2CON                             00000012
+TABLA                             00000050
+TABLA_SEC1                        00000064
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TMR1                              0000000E
+TMR1CS                            00000001
+TMR1GE                            00000006
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRES                              00000033
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISA5                            00000005
+TRISA6                            00000006
+TRISA7                            00000007
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+TRISC                             00000087
+TRISC0                            00000000
+TRISC1                            00000001
+TRISC2                            00000002
+TRISC3                            00000003
+TRISC4                            00000004
+TRISC5                            00000005
+TRISC6                            00000006
+TRISC7                            00000007
+TRISD                             00000088
+TRISD0                            00000000
+TRISD1                            00000001
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE 14
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+TRISD2                            00000002
+TRISD3                            00000003
+TRISD4                            00000004
+TRISD5                            00000005
+TRISD6                            00000006
+TRISD7                            00000007
+TRISE                             00000089
+TRISE0                            00000000
+TRISE1                            00000001
+TRISE2                            00000002
+TRISE3                            00000003
+TRMT                              00000001
+TUN0                              00000000
+TUN1                              00000001
+TUN2                              00000002
+TUN3                              00000003
+TUN4                              00000004
+TX8_9                             00000006
+TX9                               00000006
+TX9D                              00000000
+TXD8                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+UA                                00000001
+ULPWUE                            00000005
+ULPWUIE                           00000002
+ULPWUIF                           00000002
+UNID                              00000070
+UNIDADES                          00000071
+UNO                               00000034
+VCFG0                             00000004
+VCFG1                             00000005
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             00000097
+VREN                              00000007
+VROE                              00000006
+VRR                               00000005
+VRSS                              00000004
+W                                 00000000
+WCOL                              00000007
+WDTCON                            00000105
+WDTPS0                            00000001
+WDTPS1                            00000002
+WDTPS2                            00000003
+WDTPS3                            00000004
+WPUB                              00000095
+WPUB0                             00000000
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE 15
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+WPUB1                             00000001
+WPUB2                             00000002
+WPUB3                             00000003
+WPUB4                             00000004
+WPUB5                             00000005
+WPUB6                             00000006
+WPUB7                             00000007
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+WUE                               00000001
+Z                                 00000002
+_.org_1_0055                      00000055
+_.org_1_005B                      0000005B
+_.org_1_007D                      0000007D
+_.org_1_007F                      0000007F
+_.org_1_0081                      00000081
+_.org_1_008A                      0000008A
+_.org_1_008C                      0000008C
+_.org_1_008E                      0000008E
+_BOR21V                           00003EFF
+_BOR40V                           00003FFF
+_BOR4V_BOR21V                     00003EFF
+_BOR4V_BOR40V                     00003FFF
+_BOREN_NSLEEP                     00003EFF
+_BOREN_OFF                        00003CFF
+_BOREN_ON                         00003FFF
+_BOREN_SBODEN                     00003DFF
+_BOR_NSLEEP                       00003EFF
+_BOR_OFF                          00003CFF
+_BOR_ON                           00003FFF
+_BOR_SBODEN                       00003DFF
+_CONFIG1                          00002007
+_CONFIG2                          00002008
+_CPD_OFF                          00003FFF
+_CPD_ON                           00003F7F
+_CP_OFF                           00003FFF
+_CP_ON                            00003FBF
+_DEBUG_OFF                        00003FFF
+_DEBUG_ON                         00001FFF
+_DEVID1                           00002006
+_EC_OSC                           00003FFB
+_EXTRC                            00003FFF
+_EXTRCIO                          00003FFE
+_EXTRC_OSC_CLKOUT                 00003FFF
+_EXTRC_OSC_NOCLKOUT               00003FFE
+_FCMEN_OFF                        000037FF
+_FCMEN_ON                         00003FFF
+_FOSC_EC                          00003FFB
+_FOSC_EXTRC_CLKOUT                00003FFF
+_FOSC_EXTRC_NOCLKOUT              00003FFE
+_FOSC_HS                          00003FFA
+_FOSC_INTRC_CLKOUT                00003FFD
+MPASM 5.66                     CONVERSOR.ASM   3-15-2017  12:29:50         PAGE 16
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_FOSC_INTRC_NOCLKOUT              00003FFC
+_FOSC_LP                          00003FF8
+_FOSC_XT                          00003FF9
+_HS_OSC                           00003FFA
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_IESO_OFF                         00003BFF
+_IESO_ON                          00003FFF
+_INTOSC                           00003FFD
+_INTOSCIO                         00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LP_OSC                           00003FF8
+_LVP_OFF                          00002FFF
+_LVP_ON                           00003FFF
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FEF
+_WDTE_OFF                         00003FF7
+_WDTE_ON                          00003FFF
+_WDT_OFF                          00003FF7
+_WDT_ON                           00003FFF
+_WRT_1FOURTH                      00003BFF
+_WRT_256                          00003DFF
+_WRT_HALF                         000039FF
+_WRT_OFF                          00003FFF
+_XT_OSC                           00003FF9
+__16F887                          00000001
+
+Errors   :     0
+Warnings :     0 reported,     0 suppressed
+Messages :    20 reported,     0 suppressed
+
+

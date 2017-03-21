@@ -1,0 +1,87 @@
+MPLINK 5.08, LINKER
+Linker Map File - Created Wed Mar 15 12:30:05 2017
+
+                                 Section Info
+                  Section       Type    Address   Location Size(Bytes)
+                ---------  ---------  ---------  ---------  ---------
+                   .org_0       code   0x000000    program   0x000002
+                   .cinit    romdata   0x000001    program   0x000004
+                   .org_1       code   0x000005    program   0x000116
+.config_2007_BUILD/DEFAULT/PRODUCTION/CONVERS       code   0x002007    program   0x000002
+.config_2008_BUILD/DEFAULT/PRODUCTION/CONVERS       code   0x002008    program   0x000002
+
+
+
+                              Program Memory Usage 
+                               Start         End      
+                           ---------   ---------      
+                            0x000000    0x000002      
+                            0x000005    0x00008f      
+                            0x002007    0x002008      
+            144 out of 8455 program addresses used, program memory utilization is 1%
+
+
+
+                              Symbols - Sorted by Name
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+  BCD_INCREMENTA_CENTENAS   0x000044    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+    BCD_INCREMETA_DECENAS   0x00003e    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                BCD_RESTA   0x00003a    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+              BIN_BCD_FIN   0x000047    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                    CEROS   0x00002c    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                    CLEAR   0x000026    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                  COMPARA   0x000071    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                   CONTAR   0x000029    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                      DOS   0x000031    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                   INICIO   0x000005    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                     LOOP   0x00005d    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                     PREL   0x00002e    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                  RETARDO   0x000076    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+            RETARDO_500ms   0x000083    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+                    TABLA   0x000050    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+               TABLA_SEC1   0x000064    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                     TRES   0x000033    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                      UNO   0x000034    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+             _.org_1_0055   0x000055    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+             _.org_1_005B   0x00005b    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+             _.org_1_007D   0x00007d    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+             _.org_1_007F   0x00007f    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+             _.org_1_0081   0x000081    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+             _.org_1_008A   0x00008a    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+             _.org_1_008C   0x00008c    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+             _.org_1_008E   0x00008e    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+
+
+
+                              Symbols - Sorted by Address
+                     Name    Address   Location    Storage File                     
+                ---------  ---------  ---------  --------- ---------                
+                   INICIO   0x000005    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                    CLEAR   0x000026    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                   CONTAR   0x000029    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                    CEROS   0x00002c    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                     PREL   0x00002e    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                      DOS   0x000031    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                     TRES   0x000033    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                      UNO   0x000034    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                BCD_RESTA   0x00003a    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+    BCD_INCREMETA_DECENAS   0x00003e    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+  BCD_INCREMENTA_CENTENAS   0x000044    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+              BIN_BCD_FIN   0x000047    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                    TABLA   0x000050    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+             _.org_1_0055   0x000055    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+             _.org_1_005B   0x00005b    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                     LOOP   0x00005d    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+               TABLA_SEC1   0x000064    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                  COMPARA   0x000071    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\conversor.asm
+                  RETARDO   0x000076    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+             _.org_1_007D   0x00007d    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+             _.org_1_007F   0x00007f    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+             _.org_1_0081   0x000081    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+            RETARDO_500ms   0x000083    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+             _.org_1_008A   0x00008a    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+             _.org_1_008C   0x00008c    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+             _.org_1_008E   0x00008e    program     static C:\Users\Camilo\Documents\Documents\Camilo\MICROCONTROLADORES\I_2017\ContadorLAB1\Conta.X\tempo.inc
+
+
